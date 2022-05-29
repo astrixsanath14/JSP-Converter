@@ -1,0 +1,34 @@
+<idea-plugin>
+    <id>com.sanath.tools.jsp.converter</id>
+    <name>JSP Converter</name>
+    <version>1.0.5</version>
+    <vendor email="astrixsanath14@gmail.com"></vendor>
+    <description>This is a plugin to convert code from Java to JSP.</description>
+
+	<!-- please see https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html for description -->
+	<idea-version since-build="173.0"/>
+
+	<!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html on how to target different products -->
+	<depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!--  #####  -->
+<!--	    <group id="JSPConverterGroupPSI" text="JSP Converter" popup="true">-->
+<!--            <add-to-group group-id="EditorPopupMenu" anchor="first"/>-->
+<!--            <action id="copyjspconvertedcontent" class="com.jspconverter.actions.CopyJSPContentUsingPSIToClipBoard" text="Copy to ClipBoard" description="Copy JSP contents to ClipBoard">-->
+<!--            </action>-->
+<!--            <action id="jspconvertersub" class="com.jspconverter.actions.OpenJSPContentUsingPSIInEditor" text="Open in Editor" description="Open JSP contents in Editor">-->
+<!--            </action>-->
+<!--        </group>-->
+
+        <action id="copyjspconvertedcontent" class="com.jspconverter.actions.CopyJSPContentUsingPSIToClipBoard" text="Convert to JSP" description="Copy JSP contents to ClipBoard">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
+	    <!--  #####  -->
+    </actions>
+</idea-plugin>
