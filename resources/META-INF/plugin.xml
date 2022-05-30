@@ -1,12 +1,20 @@
 <idea-plugin>
     <id>com.sanath.tools.jsp.converter</id>
     <name>JSP Converter</name>
-    <version>1.0.5</version>
+    <version>1.0.8.1</version>
     <vendor email="astrixsanath14@gmail.com"></vendor>
-    <description>This is a plugin to convert code from Java to JSP.</description>
+
+     <description><![CDATA[
+    This is a tool to convert code from Java to JSP for backend developers.<br><br>
+    A few points to keep in mind:<br><br>
+    <li>The tool will convert only Java code to JSP format.</li><br>
+    <li>By default, if there is a single main method, then it will be considered as the starting point of code execution. Otherwise, the first method will be considered as main method. The remaining methods will be copied too.</li><br>
+    <li>Apart from imports, code statements within methods will only be present. So, class variables/static blocks will not be copied.</li><br>
+    <li>You can define <code><u>JSPWriter out</u></code> as a class variable to avoid IntelliJ syntax warning in your code while using <code><u>out</u></code> statements.</li><br>
+    ]]></description>
 
 	<!-- please see https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html for description -->
-	<idea-version since-build="173.0"/>
+	<idea-version since-build="173.*"/>
 
 	<!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html on how to target different products -->
 	<depends>com.intellij.modules.platform</depends>

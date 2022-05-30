@@ -11,6 +11,8 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiImportList;
 import com.intellij.psi.PsiImportStatement;
+import com.intellij.psi.PsiImportStatementBase;
+import com.intellij.psi.PsiImportStaticStatement;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiStatement;
@@ -113,20 +115,30 @@ public class JSPConverterUtil
 		return sb.toString();
 	}
 
-	static String[] convertAnGetJavaImportsAsJSPImports(PsiJavaFile psiJavaFile)
+	static String[] convertAnGetJavaImportsAsJSPImports(PsiJavaFile psiJavaFile) throws JSPConverterException
 	{
 		PsiImportList psiImportList = psiJavaFile.getImportList();
-		psiImportList.getAllImportStatements();
 		return convertAnGetJavaImportsAsJSPImports(psiImportList);
 	}
 
-	private static String[] convertAnGetJavaImportsAsJSPImports(PsiImportList psiImportList)
+	private static String[] convertAnGetJavaImportsAsJSPImports(PsiImportList psiImportList) throws JSPConverterException
 	{
 		System.out.println("Imports: ");
 		List<String> jspImportsList = new ArrayList<>();
-		for (PsiImportStatement psiImportStatement : psiImportList.getImportStatements())
+		for (PsiImportStatementBase psiImportStatement : psiImportList.getAllImportStatements())
 		{
-			jspImportsList.add("<%@page import=\"" + psiImportStatement.getImportReference().getText() + "\"%>");
+			if (psiImportStatement instanceof PsiImportStatement)
+			{
+				jspImportsList.add("<%@page import=\"" + psiImportStatement.getImportReference().getText() + "\"%>");
+			}
+			else if (psiImportStatement instanceof PsiImportStaticStatement)
+			{
+				jspImportsList.add("<%@page import=\"static " + psiImportStatement.getImportReference().getText() + "\"%>");
+			}
+			else
+			{
+				throw new JSPConverterException(ErrorConstants.INVALID_DATA, "Unsupported import reference found: " + psiImportStatement.getText());
+			}
 		}
 		return jspImportsList.toArray(new String[0]);
 	}
