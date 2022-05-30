@@ -1,10 +1,8 @@
 package com.jspconverter.actions;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.swing.*;
-import javax.swing.text.html.HTMLDocument;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -12,10 +10,15 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
+import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.Function;
-import com.intellij.util.execution.ParametersListUtil;
+import com.jspconverter.ErrorConstants;
 import com.jspconverter.JSPConverterAPI;
 import com.jspconverter.JSPConverterException;
 
@@ -26,6 +29,7 @@ public class OpenJSPContentUsingPSIInEditor extends AnAction
 		PsiFile psiFile = anActionEvent.getDataContext().getData(CommonDataKeys.PSI_FILE);
 		Editor editor = anActionEvent.getDataContext().getData(CommonDataKeys.HOST_EDITOR);
 		Integer tabSize = editor.getSettings().getTabSize(anActionEvent.getProject());
+		Project project = anActionEvent.getProject();
 		try
 		{
 			//PsiFile psiFile = anActionEvent.getDataContext().getData(CommonDataKeys.PSI_FILE);
@@ -36,8 +40,32 @@ public class OpenJSPContentUsingPSIInEditor extends AnAction
 			String jspContents = JSPConverterAPI.getJSPFileContentsOfJavaFile(psiFile, tabSize);
 			System.out.println("JSP contents: " + jspContents);
 
-			JTextField jTextField = new JTextField(new HTMLDocument(), jspContents, 10000);
-			Messages.showTextAreaDialog(jTextField, "Converted JSP file contents", null, DEFAULT_LINE_PARSER, ParametersListUtil.DEFAULT_LINE_JOINER);
+			//JTextField jTextField = new JTextField(new HTMLDocument(), jspContents, 10000);
+			//Messages.showTextAreaDialog(jTextField, "Converted JSP file contents", null, DEFAULT_LINE_PARSER, ParametersListUtil.DEFAULT_LINE_JOINER);
+
+			try
+			{
+				LightVirtualFile lightVirtualFile = new LightVirtualFile("JSP_Converter_Temporary_Editor.jsp");
+				lightVirtualFile.setBinaryContent(jspContents.getBytes());
+
+				int myOrientation = 1;
+				FileEditorManagerEx fileEditorManagerEx = FileEditorManagerImpl.getInstanceEx(project);
+
+				fileEditorManagerEx.openTextEditor(new OpenFileDescriptor(project, lightVirtualFile), true);
+				fileEditorManagerEx.createSplitter(myOrientation, fileEditorManagerEx.getCurrentWindow());
+				for (VirtualFile file : fileEditorManagerEx.getOpenFiles())
+				{
+					if (file.getName().equals(lightVirtualFile.getName()))
+					{
+						fileEditorManagerEx.getPrevWindow(fileEditorManagerEx.getCurrentWindow()).closeFile(file);
+						break;
+					}
+				}
+			}
+			catch (IOException e)
+			{
+				throw new JSPConverterException(ErrorConstants.INVALID_DATA, e.getMessage());
+			}
 		}
 		catch (JSPConverterException exception)
 		{

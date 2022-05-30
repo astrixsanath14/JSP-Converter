@@ -1,5 +1,7 @@
 package com.jspconverter;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +26,8 @@ public class JSPConverterUtil
 	private static final String DEFAULT_TAB_STR = "\t";
 	private static final String MAIN_LOWERCASE = "main";
 	private static final String DOT = ".";
+	public final static String JSP = "jsp";
+	public final static String DOT_JSP = DOT + "jsp";
 
 	static String getJSPFileContentsOfJavaFile(PsiFile psiFile, Integer tabSize) throws JSPConverterException
 	{
@@ -112,7 +116,8 @@ public class JSPConverterUtil
 		System.out.println("ClassName :: " + javaClass.getName());
 		printDashedLine();
 
-		return sb.toString();
+		String jspContent = sb.toString();
+		return jspContent.replace("System.out.", "out.");
 	}
 
 	static String[] convertAnGetJavaImportsAsJSPImports(PsiJavaFile psiJavaFile) throws JSPConverterException
@@ -185,5 +190,27 @@ public class JSPConverterUtil
 	public static String repeat(int count, String with)
 	{
 		return new String(new char[count]).replace("\0", with);
+	}
+
+	public static boolean isValidJSPFilePath(String jspFilePathWithExtension)
+	{
+		if (!jspFilePathWithExtension.endsWith(DOT_JSP))
+		{
+			return false;
+		}
+		return isValidFilePath(jspFilePathWithExtension);
+	}
+
+	public static boolean isValidFilePath(String path)
+	{
+		File file = new File(path);
+		try
+		{
+			return file.getCanonicalPath().equalsIgnoreCase(path);
+		}
+		catch (IOException e)
+		{
+			return false;
+		}
 	}
 }
