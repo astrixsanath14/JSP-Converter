@@ -14,6 +14,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
@@ -21,6 +22,7 @@ import com.intellij.util.Function;
 import com.jspconverter.ErrorConstants;
 import com.jspconverter.JSPConverterAPI;
 import com.jspconverter.JSPConverterException;
+import com.jspconverter.JSPConverterUtil;
 
 public class OpenJSPContentUsingPSIInEditor extends AnAction
 {
@@ -45,13 +47,14 @@ public class OpenJSPContentUsingPSIInEditor extends AnAction
 
 			try
 			{
-				LightVirtualFile lightVirtualFile = new LightVirtualFile("JSP_Converter_Temporary_Editor.jsp");
+				String prefix = "_" + System.currentTimeMillis();
+				LightVirtualFile lightVirtualFile = new LightVirtualFile("JSP_Converter_Temporary_Editor" + prefix + JSPConverterUtil.DOT_JSP);
 				lightVirtualFile.setBinaryContent(jspContents.getBytes());
 
 				int myOrientation = 1;
 				FileEditorManagerEx fileEditorManagerEx = FileEditorManagerImpl.getInstanceEx(project);
-
-				fileEditorManagerEx.openTextEditor(new OpenFileDescriptor(project, lightVirtualFile), true);
+				//fileEditorManagerEx.openTextEditor(new OpenFileDescriptor(project, lightVirtualFile), true);
+				fileEditorManagerEx.openFile(lightVirtualFile, true, true);
 				fileEditorManagerEx.createSplitter(myOrientation, fileEditorManagerEx.getCurrentWindow());
 				for (VirtualFile file : fileEditorManagerEx.getOpenFiles())
 				{

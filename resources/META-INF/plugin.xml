@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.sanath.tools.jsp.converter</id>
     <name>JSP Converter</name>
-    <version>1.0.9</version>
+    <version>1.0.9.1</version>
     <vendor email="astrixsanath14@gmail.com">Sanath Ramachandran</vendor>
 
      <description><![CDATA[
@@ -20,6 +20,7 @@
     <change-notes><![CDATA[
     <li>Provided option for saving the JSP.</li><br>
     <li>Enhanced open in editor view option.</li><br>
+    <li>Fixed LocalFileSystem version compatibility.</li><br>
     ]]></change-notes>
 
     <extensions defaultExtensionNs="com.intellij">

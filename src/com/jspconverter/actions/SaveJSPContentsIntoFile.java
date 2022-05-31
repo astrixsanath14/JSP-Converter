@@ -1,5 +1,6 @@
 package com.jspconverter.actions;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -22,8 +23,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NonEmptyInputValidator;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.vcs.vfs.VcsFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileSystem;
+import com.intellij.openapi.vfs.ex.dummy.DummyFileSystem;
 import com.intellij.openapi.vfs.impl.local.LocalFileSystemImpl;
 import com.intellij.psi.PsiFile;
 import com.jspconverter.ErrorConstants;
@@ -94,13 +99,15 @@ public class SaveJSPContentsIntoFile extends AnAction
 					JSPConverterExceptionHandler.handleException(new JSPConverterException(ErrorConstants.INVALID_DATA, e.getMessage()));
 				}
 				Notifications.Bus.notify(new Notification(Notifications.SYSTEM_MESSAGES_GROUP_ID, "JSP Converter", "Successfully saved JSP Contents at " + destinationFilePath, NotificationType.INFORMATION));
-				LocalFileSystem localFileSystem = new LocalFileSystemImpl();
-				VirtualFile destinationFile = localFileSystem.refreshAndFindFileByPath(destinationFilePath);
+				//VirtualFile destinationFile = new LocalFileSystemImpl().refreshAndFindFileByPath(destinationFilePath);
+				VirtualFile destinationFile = VfsUtil.findFileByIoFile(new File(destinationFilePath), true);
 
 				int myOrientation = 1;
 				FileEditorManagerEx fileEditorManagerEx = FileEditorManagerImpl.getInstanceEx(project);
 
-				fileEditorManagerEx.openTextEditor(new OpenFileDescriptor(project, destinationFile), true);
+				//fileEditorManagerEx.openTextEditor(new OpenFileDescriptor(project, destinationFile), true);
+				//fileEditorManagerEx.openFile(new FileEditorManagerImpl(project).openFileEditor(new OpenFileDescriptor(project, destinationFile), true));
+				fileEditorManagerEx.openFile(destinationFile, true, true);
 				fileEditorManagerEx.createSplitter(myOrientation, fileEditorManagerEx.getCurrentWindow());
 				for (VirtualFile file : fileEditorManagerEx.getOpenFiles())
 				{
